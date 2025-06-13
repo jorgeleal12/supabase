@@ -1,0 +1,31 @@
+version: '3.6'
+
+services:
+  db:
+    image: supabase/postgres:15.1.0.79
+    container_name: supabase_db
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - '5432:5432'
+    volumes:
+      - supabase_db_data:/var/lib/postgresql/data
+
+  studio:
+    image: supabase/studio:20240109-4be27f6
+    container_name: supabase_studio
+    depends_on:
+      - db
+    ports:
+      - '3000:3000'
+    environment:
+      SUPABASE_DB_HOST: db
+      SUPABASE_DB_PORT: 5432
+      SUPABASE_DB_NAME: postgres
+      SUPABASE_DB_USER: postgres
+      SUPABASE_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      SUPABASE_SITE_URL: http://localhost:3000
+
+volumes:
+  supabase_db_data:
